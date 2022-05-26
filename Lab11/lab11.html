@@ -2,8 +2,8 @@
 <meta charset="UTF-8">
 <html>
 <head>
-<title>CS424, Fall 2017, Lab 12</title>
-<script type="text/javascript" src="https://gc.kis.v2.scr.kaspersky-labs.com/FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js" charset="UTF-8"></script><style>
+<title>CS424, Fall 2017, Lab 11</title>
+<style>
     body {
         background-color: #EEEEEE;
     }
@@ -93,11 +93,12 @@
     }
 </script>
 
+<script src="teapot-model-IFS.js"></script>
+<script src="gl-matrix.js"></script>
+<script src="basic-object-models-IFS.js"></script>
 
-<script src="resources/gl-matrix.js"></script>
-<script src="resources/basic-object-models-IFS.js"></script>
-<script src="resources/teapot-model-IFS.js"></script>
 <script>
+
 "use strict";
 
 var gl;   // The webgl context
@@ -131,97 +132,86 @@ var currentColor = [1,1,1];   // The current diffuse color; render() functions i
                               // Specular color properties, which don't change, are set in initGL()
 
 var rotateX = 0, rotateY = 0;   // Overal rotation of model, in radians, set by mouse dragging.                          
-
-var zmiana = 0 ;                               
+                               
 /**
  * Draws the image, which consists of either the "world" or a closeup of the "car".
  */
- function Lopatka()
- {
+
+function addBlade()
+{
     pushMatrix();
-    mat4.rotateY(modelview,modelview, Math.PI * 0.5);
-    mat4.scale(modelview,modelview,[1, 1, 4]);
+    currentColor = [200/255, 1, 252/255];
+    mat4.rotateY(modelview, modelview, Math.PI /2);
+    mat4.translate(modelview, modelview, [0, 0, 2.7]);
+    mat4.scale(modelview, modelview, [0.7, 0.7, 4.1]);
     cone.render();
     popMatrix();
+
     pushMatrix();
-    mat4.translate(modelview, modelview, [-2.5, 0, 0])
-    mat4.rotateY(modelview,modelview, Math.PI * 0.5);
-    mat4.rotateX(modelview,modelview, Math.PI);
+    currentColor = [200/255, 1, 252/255];
+    mat4.translate(modelview, modelview, [0.3, 0, 0]);
+    mat4.rotateY(modelview, modelview, Math.PI /2);
+    mat4.rotateX(modelview, modelview, Math.PI );
+	mat4.scale(modelview, modelview,[0.7, 0.7, 0.7]);
     cone.render();
     popMatrix();
- }
-  function lopatki()
-  {
-    pushMatrix()//3
-    mat4.translate(modelview, modelview, [-5.3, 0.3, 0.3])
-    mat4.rotateZ(modelview,modelview, Math.PI * 0.20);
-    mat4.rotateY(modelview,modelview, Math.PI);
-    Lopatka();
-    popMatrix();
-	
-	pushMatrix()//2
-    mat4.translate(modelview, modelview, [-0.45,0.25,0.3])
-    mat4.rotateZ(modelview,modelview, 0.80 * Math.PI);
-    mat4.rotateY(modelview,modelview, Math.PI);
-    Lopatka();
-    popMatrix();
-	
-    pushMatrix()// 1
-    mat4.translate(modelview, modelview, [-2.9, 5, 0.3])
-    mat4.rotateZ(modelview,modelview, Math.PI * 1.5);
-    mat4.rotateY(modelview,modelview, Math.PI);
-    Lopatka();
-    popMatrix();
-  }
-  
- function Podstawa()
- {
-    pushMatrix()
-     currentColor = [1, 0, 0];
-    mat4.translate(modelview, modelview, [0, -5, 0])
-    mat4.scale(modelview,modelview,[6, 1, 6]);
-    cube.render();
-    popMatrix();
- }
-  function Kijek()
-  {
-    pushMatrix();
-    currentColor = [1, 0, 0];
-	currentColor = [0.564, 0.39, 0.137];
-    mat4.translate(modelview, modelview, [0, 0, 0])
-    mat4.rotateX(modelview,modelview, Math.PI * 0.5);
-    mat4.scale(modelview,modelview,[0.5, 0.5, 9]);
-    cylinder.render();
-    popMatrix();
-	
-	pushMatrix();
-    currentColor = [1,1, 1];
-    mat4.translate(modelview, modelview, [-2.9, 2, 0])
-    pushMatrix();
-    mat4.translate(modelview, modelview, [2.9, 2, 0])
-    mat4.rotate(modelview, modelview, zmiana, [0, 0, 1]);
-    mat4.translate(modelview, modelview, [2.9, -2, 0])
-    lopatki();
-    popMatrix();
-    popMatrix();
- }
- 
+}
+
+var rotateEachFrame = 0.5; 
+
 function draw() {
     gl.clearColor(0,0,0,1);
-    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);  
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    
     mat4.perspective(projection, Math.PI/4, 1, 1, 50);
     gl.uniformMatrix4fv(u_projection, false, projection );
+
     mat4.lookAt(modelview, [0,0,25], [0,0,0], [0,1,0]);
+    
     mat4.rotateX(modelview,modelview,rotateX);
     mat4.rotateY(modelview,modelview,rotateY);
-	
-    Podstawa();
-	Kijek();
 
-	zmiana += Math.PI * 0.01;
-    currentColor = [1, 0.6, 1]; // light magenta
-   // cube.render();  // As an example, show an unscaled cube.
+    pushMatrix();
+    currentColor = [0.999, 0.111, 0.111];
+    mat4.translate(modelview, modelview, [0, -5, 0]);
+    mat4.scale(modelview,modelview,[5, 1, 5]);
+    cube.render();
+    popMatrix();
     
+ 
+    pushMatrix();
+    currentColor = [0.999, 0.555, 0.333];
+    mat4.translate(modelview, modelview, [0, 0, 0]);
+    mat4.rotateX(modelview,modelview, Math.PI * 0.5);
+    mat4.scale(modelview,modelview,[0.4, 0.4, 10]);
+    cylinder.render();
+    popMatrix();
+
+   
+    pushMatrix();
+    currentColor = [0.222, 0.888, 0.222];
+    mat4.translate(modelview, modelview, [-1.2, -4.1, -2.0]);
+    mat4.scale(modelview,modelview,[0.05, 0.05, 0.05]);
+    teapot.render();
+    popMatrix();
+
+    pushMatrix();
+    mat4.translate(modelview, modelview, [-2.9, 2, 0.2]);
+    pushMatrix();
+    mat4.translate(modelview, modelview, [2.9, 2, 0]);
+    mat4.rotate(modelview, modelview, rotateEachFrame, [0, 0, 1]);
+    mat4.translate(modelview, modelview, [2.9, -2, 0]);
+    
+    let vertices =12;
+    for(let i =0; i<vertices;i++){
+        pushMatrix();
+        mat4.translate(modelview, modelview, [-3, 1.95, 0]);
+        mat4.rotateY(modelview,modelview, Math.PI);
+        mat4.rotateZ(modelview,modelview, i*(360/vertices)*(Math.PI/180));
+        addBlade();
+        popMatrix();
+    }
+
 } // end draw();
 
 
@@ -444,19 +434,19 @@ var animating = false;
 
 function frame() {
     if (animating) {
+        rotateEachFrame=rotateEachFrame+Math.PI*0.01;
         frameNumber += 1;
         draw();
+
         requestAnimationFrame(frame);
     }
 }
-//animacja
+
 function setIsAnimating() {
     var run = document.getElementById("animCheck").checked;
     if (run != animating) {
-	
         animating = run;
         if (animating)
-		
             requestAnimationFrame(frame);
     }
 }
@@ -496,9 +486,10 @@ function init() {
     cone = createModel(uvCone());            // create the basic objects
     cylinder = createModel(uvCylinder());    //    uvCone(), uvCylinder(), and cube()
     cube = createModel(cube());              //    are defined in basic-object-models-IFS.js
- 
+    teapot = createModel(teapot());
     draw();
 }
+
 
 </script>
 </head>
@@ -524,4 +515,3 @@ function init() {
 </div>
 </body>
 </html>
-
